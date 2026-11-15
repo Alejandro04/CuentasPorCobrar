@@ -2,7 +2,8 @@
 import { Suspense } from "react";
 import { DeudorFilters } from "@/components/deudor-filters";
 import { formatCOP, formatFecha } from "@/lib/format";
-import { listDeudores, type FiltrosDeudores } from "@/lib/queries";
+import { Paginacion } from "@/components/paginacion";
+import { listDeudores, POR_PAGINA, type FiltrosDeudores } from "@/lib/queries";
 
 function texto(
   sp: Record<string, string | string[] | undefined>,
@@ -21,6 +22,7 @@ export default async function Home({
   const estadoRaw = texto(sp, "estado");
   const filtros: FiltrosDeudores = {
     q: texto(sp, "q"),
+    cedula: texto(sp, "cedula"),
     estado:
       estadoRaw === "pendientes" || estadoRaw === "pagados"
         ? estadoRaw
@@ -28,7 +30,8 @@ export default async function Home({
     desde: texto(sp, "desde"),
     hasta: texto(sp, "hasta"),
   };
-  const deudores = await listDeudores(filtros);
+  const pagina = Number(texto(sp, "pagina")) || 1;
+  const { filas: deudores, total } = await listDeudores(filtros, pagina);
 
   return (
     <div className="flex flex-col gap-4">
@@ -61,9 +64,9 @@ export default async function Home({
                 <div className="min-w-0">
                   <p className="truncate font-medium text-zinc-900">{d.nombre}</p>
                   <p className="text-xs text-zinc-500">
-                    {d.telefono ?? "Sin telÃ©fono"}
+                    {d.telefono ?? "Sin teléfono"}
                     {d.fecha_ultimo_movimiento &&
-                      ` Â· Ãšlt. mov. ${formatFecha(d.fecha_ultimo_movimiento)}`}
+                      ` · Últ. mov. ${formatFecha(d.fecha_ultimo_movimiento)}`}
                   </p>
                 </div>
                 <p
@@ -78,6 +81,8 @@ export default async function Home({
           ))}
         </ul>
       )}
+
+      <Paginacion pagina={pagina} total={total} porPagina={POR_PAGINA} />
 
       <div className="flex gap-2 pt-2">
         <Link

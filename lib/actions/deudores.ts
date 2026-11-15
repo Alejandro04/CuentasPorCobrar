@@ -10,6 +10,7 @@ const enteroPositivo = /^\d+$/;
 function leerDeudor(formData: FormData) {
   return deudorSchema.safeParse({
     nombre: formData.get("nombre"),
+    cedula: formData.get("cedula"),
     telefono: formData.get("telefono"),
     direccion: formData.get("direccion"),
     notas: formData.get("notas"),
@@ -43,6 +44,7 @@ export async function crearDeudor(
     .from("deudores")
     .insert({
       nombre: parse.data.nombre,
+      cedula: parse.data.cedula,
       telefono: parse.data.telefono,
       direccion: parse.data.direccion,
       notas: parse.data.notas,
@@ -86,6 +88,7 @@ export async function actualizarDeudor(
     .from("deudores")
     .update({
       nombre: parse.data.nombre,
+      cedula: parse.data.cedula,
       telefono: parse.data.telefono,
       direccion: parse.data.direccion,
       notas: parse.data.notas,

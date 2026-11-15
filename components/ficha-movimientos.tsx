@@ -45,9 +45,11 @@ function NuevoMovimientoPanel({
 export function FichaMovimientos({
   deudorId,
   movimientos,
+  total,
 }: {
   deudorId: string;
   movimientos: Movimiento[];
+  total: number;
 }) {
   const [mostrarForm, setMostrarForm] = useState<"cargo" | "abono" | null>(null);
   const [editando, setEditando] = useState<string | null>(null);
@@ -56,7 +58,7 @@ export function FichaMovimientos({
     <section className="flex flex-col gap-3">
       <div className="no-print flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-semibold text-zinc-900">
-          Historial ({movimientos.length})
+          Historial ({total})
         </h2>
         <div className="flex gap-2">
           <button

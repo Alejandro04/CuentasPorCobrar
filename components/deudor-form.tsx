@@ -16,7 +16,7 @@ export function DeudorForm({
   cancelHref = "/",
 }: {
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
-  deudor?: Pick<Deudor, "nombre" | "telefono" | "direccion" | "notas">;
+  deudor?: Pick<Deudor, "nombre" | "cedula" | "telefono" | "direccion" | "notas">;
   conDeudaInicial?: boolean;
   cancelHref?: string;
 }) {
@@ -43,6 +43,19 @@ export function DeudorForm({
           className={inputCls}
         />
         {err("nombre")}
+      </div>
+      <div className="flex flex-col gap-1">
+        <label htmlFor="cedula" className={labelCls}>
+          Cédula
+        </label>
+        <input
+          id="cedula"
+          name="cedula"
+          inputMode="numeric"
+          defaultValue={deudor?.cedula ?? ""}
+          className={inputCls}
+        />
+        {err("cedula")}
       </div>
       <div className="flex flex-col gap-1">
         <label htmlFor="telefono" className={labelCls}>
@@ -90,7 +103,7 @@ export function DeudorForm({
           </legend>
           <div className="flex flex-col gap-1">
             <label htmlFor="monto_inicial" className={labelCls}>
-              Monto ($)
+              Monto (Pesos Colombianos)
             </label>
             <input
               id="monto_inicial"

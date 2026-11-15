@@ -44,7 +44,7 @@ export function MovimientoForm({
       <input type="hidden" name="tipo" value={movimiento?.tipo ?? tipo} />
       <div className="flex gap-3">
         <div className="flex-1">
-          <label className="text-sm font-medium text-zinc-700">Monto ($) *</label>
+          <label className="text-sm font-medium text-zinc-700">Monto (Pesos Colombianos) *</label>
           <input
             name="monto"
             type="number"

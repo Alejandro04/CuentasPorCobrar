@@ -3,18 +3,23 @@ import { notFound } from "next/navigation";
 import { ConfirmButton } from "@/components/confirm-button";
 import { FichaMovimientos } from "@/components/ficha-movimientos";
 import { eliminarDeudor } from "@/lib/actions/deudores";
+import { Paginacion } from "@/components/paginacion";
 import { formatCOP } from "@/lib/format";
-import { getSaldoDeudor, listMovimientos } from "@/lib/queries";
+import { getSaldoDeudor, listMovimientos, POR_PAGINA } from "@/lib/queries";
 
 export default async function FichaDeudorPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ pagina?: string | string[] }>;
 }) {
   const { id } = await params;
   const deudor = await getSaldoDeudor(id);
   if (!deudor) notFound();
-  const movimientos = await listMovimientos(id);
+  const sp = await searchParams;
+  const pagina = Number(Array.isArray(sp.pagina) ? sp.pagina[0] : sp.pagina) || 1;
+  const { filas: movimientos, total } = await listMovimientos(id, pagina);
 
   return (
     <div className="flex flex-col gap-6">
@@ -48,13 +53,14 @@ export default async function FichaDeudorPage({
           <ConfirmButton
             action={eliminarDeudor.bind(null, id)}
             label="Eliminar deudor"
-            confirmText={`Â¿Eliminar a ${deudor.nombre} y todos sus movimientos? Esta acciÃ³n no se puede deshacer.`}
+            confirmText={`¿Eliminar a ${deudor.nombre} y todos sus movimientos? Esta acción no se puede deshacer.`}
             className="rounded-lg border border-red-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
           />
         </div>
       </div>
 
-      <FichaMovimientos deudorId={id} movimientos={movimientos} />
+      <FichaMovimientos deudorId={id} movimientos={movimientos} total={total} />
+      <Paginacion pagina={pagina} total={total} porPagina={POR_PAGINA} />
     </div>
   );
 }

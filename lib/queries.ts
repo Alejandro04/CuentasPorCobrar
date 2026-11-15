@@ -3,25 +3,35 @@ import type { Deudor, Movimiento, SaldoDeudor } from "@/lib/types";
 
 export interface FiltrosDeudores {
   q?: string;
+  cedula?: string;
   estado?: "todos" | "pendientes" | "pagados";
   desde?: string;
   hasta?: string;
 }
 
+export const POR_PAGINA = 20;
+
+function rango(pagina: number): [number, number] {
+  const desde = (Math.max(1, pagina) - 1) * POR_PAGINA;
+  return [desde, desde + POR_PAGINA - 1];
+}
+
 export async function listDeudores(
   filtros: FiltrosDeudores,
-): Promise<SaldoDeudor[]> {
+  pagina = 1,
+): Promise<{ filas: SaldoDeudor[]; total: number }> {
   const supabase = await createClient();
-  let query = supabase.from("v_saldos").select("*");
+  let query = supabase.from("v_saldos").select("*", { count: "exact" });
   if (filtros.q) query = query.ilike("nombre", `%${filtros.q}%`);
+  if (filtros.cedula) query = query.ilike("cedula", `%${filtros.cedula}%`);
   if (filtros.estado === "pendientes") query = query.gt("saldo", 0);
   if (filtros.estado === "pagados") query = query.lte("saldo", 0);
   if (filtros.desde) query = query.gte("creado_en", `${filtros.desde}T00:00:00`);
   if (filtros.hasta) query = query.lte("creado_en", `${filtros.hasta}T23:59:59.999`);
-  query = query.order("saldo", { ascending: false });
-  const { data, error } = await query;
+  query = query.order("saldo", { ascending: false }).range(...rango(pagina));
+  const { data, error, count } = await query;
   if (error) throw new Error(error.message);
-  return (data ?? []) as SaldoDeudor[];
+  return { filas: (data ?? []) as SaldoDeudor[], total: count ?? 0 };
 }
 
 export async function getDeudor(id: string): Promise<Deudor | null> {
@@ -46,16 +56,20 @@ export async function getSaldoDeudor(id: string): Promise<SaldoDeudor | null> {
   return (data as SaldoDeudor | null) ?? null;
 }
 
-export async function listMovimientos(deudorId: string): Promise<Movimiento[]> {
+export async function listMovimientos(
+  deudorId: string,
+  pagina = 1,
+): Promise<{ filas: Movimiento[]; total: number }> {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const { data, error, count } = await supabase
     .from("movimientos")
-    .select("*")
+    .select("*", { count: "exact" })
     .eq("deudor_id", deudorId)
     .order("fecha", { ascending: false })
-    .order("creado_en", { ascending: false });
+    .order("creado_en", { ascending: false })
+    .range(...rango(pagina));
   if (error) throw new Error(error.message);
-  return (data ?? []) as Movimiento[];
+  return { filas: (data ?? []) as Movimiento[], total: count ?? 0 };
 }
 
 export async function getDeudoresPendientesConMovimientos(): Promise<

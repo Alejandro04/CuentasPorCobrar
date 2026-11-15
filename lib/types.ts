@@ -5,6 +5,7 @@ export type TipoMovimiento = "cargo" | "abono";
 export interface Deudor {
   id: string;
   nombre: string;
+  cedula: string | null;
   telefono: string | null;
   direccion: string | null;
   notas: string | null;
@@ -47,6 +48,7 @@ export const deudorSchema = z.object({
     .trim()
     .min(1, { error: "El nombre es obligatorio" })
     .max(120, { error: "Máximo 120 caracteres" }),
+  cedula: textoOpcional(30),
   telefono: textoOpcional(30),
   direccion: textoOpcional(200),
   notas: textoOpcional(2000),

@@ -23,7 +23,7 @@ export default async function ReporteAntiguedadPage({
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-xl font-semibold text-zinc-900">
-          Deudores con antigÃ¼edad de {mesesMin} meses o mÃ¡s
+          Deudores con antigüedad de {mesesMin} meses o más
         </h1>
         <div className="no-print flex items-center gap-2">
           <Link
@@ -46,7 +46,7 @@ export default async function ReporteAntiguedadPage({
 
       {filas.length === 0 ? (
         <p className="py-10 text-center text-zinc-500">
-          No hay deudores con {mesesMin} meses o mÃ¡s de antigÃ¼edad.
+          No hay deudores con {mesesMin} meses o más de antigüedad.
         </p>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
@@ -54,9 +54,9 @@ export default async function ReporteAntiguedadPage({
             <thead className="border-b border-zinc-200 bg-zinc-50 text-xs uppercase text-zinc-500">
               <tr>
                 <th className="px-4 py-2">Nombre</th>
-                <th className="px-4 py-2">TelÃ©fono</th>
+                <th className="px-4 py-2">Teléfono</th>
                 <th className="px-4 py-2 text-right">Saldo</th>
-                <th className="px-4 py-2">Deuda mÃ¡s antigua</th>
+                <th className="px-4 py-2">Deuda más antigua</th>
                 <th className="px-4 py-2 text-right">Meses</th>
               </tr>
             </thead>

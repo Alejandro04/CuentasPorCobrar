@@ -8,6 +8,7 @@ export function DeudorFilters() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [nombre, setNombre] = useState(searchParams.get("q") ?? "");
+  const [cedula, setCedula] = useState(searchParams.get("cedula") ?? "");
 
   const actualizar = useCallback(
     (params: Record<string, string>) => {
@@ -16,6 +17,7 @@ export function DeudorFilters() {
         if (valor) sp.set(clave, valor);
         else sp.delete(clave);
       }
+      sp.delete("pagina"); // cualquier cambio de filtro vuelve a la página 1
       const qs = sp.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname);
     },
@@ -29,6 +31,15 @@ export function DeudorFilters() {
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nombre]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if ((searchParams.get("cedula") ?? "") !== cedula)
+        actualizar({ cedula });
+    }, 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cedula]);
 
   const labelCls = "text-xs font-medium text-zinc-600";
   const inputCls =
@@ -46,6 +57,20 @@ export function DeudorFilters() {
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           placeholder="Nombre del deudor"
+          className={inputCls}
+        />
+      </div>
+      <div className="flex-1">
+        <label htmlFor="cedula" className={labelCls}>
+          Buscar por cédula
+        </label>
+        <input
+          id="cedula"
+          type="search"
+          inputMode="numeric"
+          value={cedula}
+          onChange={(e) => setCedula(e.target.value)}
+          placeholder="Cédula del deudor"
           className={inputCls}
         />
       </div>

@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import { Header } from "@/components/header";
 
+// Todas las rutas del área privada leen cookies de Supabase y datos "a hoy": dinámicas.
+export const dynamic = "force-dynamic";
+
 export default function MainLayout({
   children,
 }: {
